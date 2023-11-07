@@ -2,6 +2,7 @@ import cv2
 import pickle
 import cvzone
 import numpy as np
+import matplotlib.pyplot as plt
 
 # video feed
 cap = cv2.VideoCapture('./assets/carPark.mp4')
@@ -10,7 +11,6 @@ with open('CarParkPos', 'rb') as f:
     posList = pickle.load(f)
 
 width, height = 107, 48
-
 
 def checkParkingSpace(imgPro):
 
@@ -27,7 +27,7 @@ def checkParkingSpace(imgPro):
         count = cv2.countNonZero(imgCrop)
 
         # put count of pixels of each place in rectangles
-        cvzone.putTextRect(img,str(count),(x,y+height-5), scale=1.5, thickness=2, offset=0, colorR=(0,0,255))
+        # cvzone.putTextRect(img,str(count),(x,y+height-5), scale=1.5, thickness=2, offset=0, colorR=(0,0,255))
 
         if count < 900:
             color = (0,255,0)
@@ -41,7 +41,7 @@ def checkParkingSpace(imgPro):
 
     # put count of pixels of each place in rectangles
     cv2.rectangle(img, pos, (pos[0]+width, pos[1]+height), color, thickness)
-    cvzone.putTextRect(img, f'Free: {spaceCounter}/{len(posList)}' ,(100, 50), scale=3, thickness=5, offset=20, colorR=color)
+    cvzone.putTextRect(img, f'Available: {spaceCounter}/{len(posList)}' ,(100, 50), scale=3, thickness=5, offset=20, colorR=color)
 
 while True:
 
@@ -67,10 +67,25 @@ while True:
 
     # for pos in posList:
         # cv2.rectangle(img, pos, (pos[0]+width, pos[1]+height),(255,0,255),2)
+    cv2.namedWindow("Image")        # Create a named window
+    cv2.moveWindow("Image", 0, 0)
+    imS = cv2.resize(img, (760, 340)) 
+    cv2.imshow("Image", imS)
+    
+    cv2.namedWindow("ImageBlur")        # Create a named window
+    cv2.moveWindow("ImageBlur", 0, 370)
+    imS = cv2.resize(imgBlur, (760, 340)) 
+    cv2.imshow("ImageBlur", imS)
 
-    cv2.imshow("Image", img)
-    cv2.imshow("ImageBlur", imgBlur)
-    cv2.imshow("ImageThresh", imgMedian)
+    cv2.namedWindow("ImageDilate")        # Create a named window
+    cv2.moveWindow("ImageDilate", 760, 0)
+    imS = cv2.resize(imgDilate, (760, 340)) 
+    cv2.imshow("ImageDilate", imS)
+
+    cv2.namedWindow("ImageThresh")        # Create a named window
+    cv2.moveWindow("ImageThresh", 760, 370)
+    imS = cv2.resize(imgMedian, (760, 340)) 
+    cv2.imshow("ImageThresh", imS)
 
     # slows down the video
     cv2.waitKey(10)
